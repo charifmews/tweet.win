@@ -27,7 +27,8 @@
     "react-toastify": "^9.1.1",
     "remix-auth": "^3.3.0",
     "remix-auth-twitter": "^0.1.0",
-    "satori": "^0.0.44"
+    "satori": "^0.0.44",
+    "web3.storage": "^4.4.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.27.1",

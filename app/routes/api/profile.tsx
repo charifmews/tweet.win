@@ -1,18 +1,8 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node"; // or cloudflare/deno
+import type { ActionFunction } from "@remix-run/node"; // or cloudflare/deno
 import { json } from "@remix-run/node"; // or cloudflare/deno
 import { Redis } from "@upstash/redis";
 import { authenticator } from "~/services/auth.server";
 import { verifyMessage } from "ethers/lib/utils";
-
-export const loader: LoaderFunction = async () => {
-  // user auth
-
-  return json({
-    //   ENV: {
-    //     FAUNA_DB_URL: process.env.FAUNA_DB_URL,
-    //   },
-  });
-};
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request);

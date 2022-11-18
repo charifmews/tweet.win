@@ -101,7 +101,7 @@ export function Header() {
       <Container className={""}>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Link to="#" aria-label="Home">
+            <Link to="/" aria-label="Home">
               <Logo className="h-10 w-auto rounded-full border border-white" />
             </Link>
             <div className="hidden md:flex md:gap-x-4">
