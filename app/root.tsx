@@ -13,11 +13,14 @@ import styles from "./styles/app.css";
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
   title: "Tweet.Win",
+  description:
+    "Never trust a giveaway tweet and participate or create our trustless giveaway tweets. Guaranteed pay-out through smart contracts.",
   viewport: "width=device-width,initial-scale=1",
   "twitter:card": "summary",
   "twitter:site": "https://tweet.win",
   "twitter:title": "Tweet.win - Cryptographically guaranteed giveaways!",
-  "twitter:description": "Retweet and create a Tweet.win profile (if you don't have one already) to participate in this guaranteed tweet giveaway!",
+  "twitter:description":
+    "Retweet and create a Tweet.win profile (if you don't have one already) to participate in this guaranteed tweet giveaway!",
   "twitter:image": "/placeholder-tweet-win.png",
 });
 

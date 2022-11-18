@@ -6,7 +6,7 @@ export default function TOS() {
       <h1>Terms of Service</h1>
       <ul>
         <li>
-          You cannot create illegal giveaways and we can block them if needed. 
+          You cannot create illegal giveaways and we can block them if needed.
         </li>
       </ul>
       <Link to={"/"}>Bank to home</Link>

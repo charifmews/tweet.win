@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
-
+import { BigNumber, ethers } from "ethers";
+import { ToastContainer, toast } from "react-toastify";
+import LinkABI from "~/lib/LinkABI.json";
+import GiveawayTweetABI from "~/lib/GiveawayTweetABI.json";
 import { authenticator, User } from "~/services/auth.server";
 import { LoaderFunction } from "@remix-run/server-runtime";
 import { Link, useLoaderData } from "@remix-run/react";
@@ -28,11 +30,13 @@ type LoaderData = {
 };
 
 const navigation = [
-  { name: "Dashboard", route: "onboarding" },
-  { name: "GiveAways Overview", route: "overview GiveAways" },
-  { name: "Create GiveAway", route: "create GiveAway" },
-  { name: "Your GiveAways", route: "your GiveAways" },
+  { route: "onboarding" },
+  { route: "dashboard" },
+  { route: "overview Giveaways" },
+  { route: "create Giveaway" },
+  { route: "your Giveaways" },
 ];
+
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Sign out", href: "/logout" },
@@ -71,11 +75,25 @@ function classNames(...classes: string[]) {
 
 export default function Dashboard() {
   const { user } = useLoaderData<LoaderData>();
-  const [dashboardRoute, setDashboardRoute] = useState<string>("onboarding");
-  
+  // const [dashboardRoute, setDashboardRoute] = useState<string>(user.wallet ? "dashboard" : "onboarding");
+  const [dashboardRoute, setDashboardRoute] =
+    useState<string>("create Giveaway");
+
   return (
     <>
-      <div className="min-h-full">
+      <div className="relative min-h-full">
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <div className="bg-blue-800 pb-32">
           <Disclosure as="nav" className="bg-blue-800">
             {({ open }) => (
@@ -89,25 +107,30 @@ export default function Dashboard() {
                         </Link>
                         <div className="hidden md:block">
                           <div className="ml-10 flex items-baseline space-x-4">
-                            {navigation.map((item) => (
-                              <a
-                                key={item.name}
-                                onClick={() => setDashboardRoute(item.route)}
-                                className={classNames(
-                                  dashboardRoute === item.route
-                                    ? "bg-blue-900 text-white"
-                                    : "text-blue-300 hover:bg-blue-700 hover:text-white",
-                                  "cursor-pointer rounded-md px-3 py-2 text-sm font-medium"
-                                )}
-                                aria-current={
-                                  dashboardRoute === item.route
-                                    ? "page"
-                                    : undefined
-                                }
-                              >
-                                {item.name}
-                              </a>
-                            ))}
+                            {navigation
+                              .filter(
+                                (item) =>
+                                  user.wallet && item.route !== "onboarding"
+                              )
+                              .map((item) => (
+                                <a
+                                  key={item.route}
+                                  onClick={() => setDashboardRoute(item.route)}
+                                  className={classNames(
+                                    dashboardRoute === item.route
+                                      ? "bg-blue-900 text-white"
+                                      : "text-blue-300 hover:bg-blue-700 hover:text-white",
+                                    "cursor-pointer rounded-md px-3 py-2 text-sm font-medium capitalize"
+                                  )}
+                                  aria-current={
+                                    dashboardRoute === item.route
+                                      ? "page"
+                                      : undefined
+                                  }
+                                >
+                                  {item.route}
+                                </a>
+                              ))}
                           </div>
                         </div>
                       </div>
@@ -179,22 +202,26 @@ export default function Dashboard() {
 
                 <Disclosure.Panel className="border-b border-blue-700 md:hidden">
                   <div className="space-y-1 px-2 py-3 sm:px-3">
-                    {navigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "block rounded-md px-3 py-2 text-base font-medium"
-                        )}
-                        aria-current={item.current ? "page" : undefined}
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
+                    {navigation
+                      .filter(
+                        (item) => user.wallet && item.route !== "onboarding"
+                      )
+                      .map((item) => (
+                        <Disclosure.Button
+                          key={item.route}
+                          as="a"
+                          onClick={() => setDashboardRoute(item.route)}
+                          className={classNames(
+                            item.route
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "block cursor-pointer rounded-md px-3 py-2 text-base font-medium capitalize"
+                          )}
+                          aria-current={item.route ? "page" : undefined}
+                        >
+                          {item.route}
+                        </Disclosure.Button>
+                      ))}
                   </div>
                   <div className="border-t border-blue-700 pt-4 pb-3">
                     <div className="flex items-center px-5">
@@ -242,7 +269,7 @@ export default function Dashboard() {
 
         <main className="-mt-32">
           <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-            {dashboardRoute === "onboarding" && !user.wallet && (
+            {dashboardRoute === "onboarding" && (
               <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
                 <div className="text-center">
                   <img
@@ -271,15 +298,19 @@ export default function Dashboard() {
                         console.log(address);
 
                         const signature = await signer.signMessage(
-                          user.id.toString()
+                          `Link Twitter @${user.screen_name} with Web3 wallet ${address}`
                         );
-                        fetch("/api/profile", {
+                        const resp = await fetch("/api/profile", {
                           method: "POST",
                           body: JSON.stringify({
                             signature,
                             address,
                           }),
                         });
+                        if (resp.status === 201) {
+                          toast.success("Linked succesfully");
+                          setDashboardRoute("dashboard");
+                        }
                       }}
                       className="inline-flex items-center rounded-full border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
@@ -289,7 +320,7 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-            {dashboardRoute === "onboarding" && user.wallet && (
+            {dashboardRoute === "dashboard" && (
               <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
                 <div className="mx-auto max-w-lg">
                   <h2 className="text-lg font-medium text-gray-900">
@@ -308,21 +339,21 @@ export default function Dashboard() {
                         name: "Create your own Giveaway Tweet",
                         description:
                           "Spread your message and let your project go viral",
-                        route: "create GiveAway",
+                        route: "create Giveaway",
                         iconColor: "bg-purple-500",
                         icon: MegaphoneIcon,
                       },
                       {
-                        name: "GiveAways",
+                        name: "Giveaways",
                         description:
                           "See all GiveAway tweets and retweet if you like them",
-                        route: "overview GiveAways",
+                        route: "overview Giveaways",
                         iconColor: "bg-blue-500",
                         icon: GiftIcon,
                       },
                     ].map((item, itemIdx) => (
                       <li key={itemIdx}>
-                        <div className="group relative flex items-start space-x-3 py-4 cursor-pointer">
+                        <div className="group relative flex cursor-pointer items-start space-x-3 py-4">
                           <div className="flex-shrink-0">
                             <span
                               className={classNames(
@@ -363,7 +394,7 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-            {dashboardRoute === "overview GiveAways" && user.wallet && (
+            {dashboardRoute === "overview Giveaways" && user.wallet && (
               <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
                 <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
                   {actions.map((action, actionIdx) => (
@@ -421,9 +452,9 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-            {dashboardRoute === "create GiveAway" && user.wallet && (
+            {dashboardRoute === "create Giveaway" && user.wallet && (
               <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
-                <form className="space-y-8 divide-y divide-gray-200">
+                <div className="space-y-8 divide-y divide-gray-200">
                   <div className="space-y-8 divide-y divide-gray-200">
                     <div>
                       <div>
@@ -471,83 +502,113 @@ export default function Dashboard() {
                               name="erc-20-coin"
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             >
+                              <option>1 days</option>
                               <option>2 days</option>
-                              <option>4 days</option>
-                              <option>6 days</option>
-                              <option>8 days</option>
-                              <option>10 days</option>
-                              <option>12 days</option>
+                              <option>3 days</option>
                             </select>
                           </div>
                         </div>
 
-                        <div className=" grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 col-span-6">
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="erc-20-amount"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Prize amount
-                          </label>
-                          <div className="mt-1">
-                            <input
-                              type="number"
-                              name="erc-20-amount"
-                              id="erc-20-amount"
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="erc-20-coin"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            ERC-20 Coin
-                          </label>
-                          <div className="mt-1">
-                            <select
-                              id="erc-20-coin"
-                              name="erc-20-coin"
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        <div className=" col-span-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                          <div className="sm:col-span-3">
+                            <label
+                              htmlFor="erc-20-amount"
+                              className="flex items-center text-sm font-medium text-gray-700"
                             >
-                              <option>Polygon</option>
-                              <option>Ethereum</option>
-                              <option>Link</option>
-                              <option>Bitcoin</option>
-                            </select>
+                              Prize amount{" "}
+                              <img
+                                className="ml-2 h-4"
+                                src="/tokens/link.png"
+                                alt="$LINK"
+                              />
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                type="number"
+                                name="erc-20-amount"
+                                id="erc-20-amount"
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="sm:col-span-3">
+                            <label
+                              htmlFor="erc-20-coin"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              ERC-20 Coin
+                            </label>
+                            <div className="mt-1">
+                              <select
+                                id="erc-20-coin"
+                                name="erc-20-coin"
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                              >
+                                <option>Link </option>
+                                <option>More ERC-20 tokens coming soon </option>
+                              </select>
+                            </div>
                           </div>
                         </div>
-                      </div>
-
-                        <div className="sm:col-span-6">
-                          <label
-                            htmlFor="cover-photo"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Thumbnail
-                          </label>
-                          <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-
-                          </div>
-                        </div> 
                       </div>
                     </div>
                   </div>
 
                   <div className="pt-5">
                     <div className="flex justify-end">
-
                       <button
-                        type="submit"
+                        onClick={async () => {
+                          const provider = new ethers.providers.Web3Provider(
+                            window.ethereum,
+                            "any"
+                          );
+                          // Prompt user for account connections
+                          await provider.send("eth_requestAccounts", []);
+                          const signer = provider.getSigner();
+                          const address = await signer.getAddress();
+                          var LinkTokenContract = new ethers.Contract(
+                            "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+                            LinkABI,
+                            signer
+                          );
+                          var GiveawayTweetTokenContract = new ethers.Contract(
+                            "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652",
+                            GiveawayTweetABI,
+                            signer
+                          );
+
+                          // const allowance = await LinkTokenContract.allowance(address, "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652")
+                          // if (allowance < BigNumber.from("0x00")) await LinkTokenContract.approve("0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652", "100000000000000000000")
+                          // await LinkTokenContract.approve("0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652", "100000000000000000000")
+                          await GiveawayTweetTokenContract.createGiveaway(
+                            "testb",
+                            "1000000000000000000"
+                          );
+                          // tokenContract.approve("0xd9145CCE52D386f254917e481eB44e9943F39138", "100000000000000000000")
+
+                          // const signature = await signer.signMessage(
+                          //   `Link Twitter @${user.screen_name} with Web3 wallet ${address}`
+                          // );
+                          // const resp = await fetch("/api/profile", {
+                          //   method: "POST",
+                          //   body: JSON.stringify({
+                          //     signature,
+                          //     address,
+                          //   }),
+                          // });
+                          // if (resp.status === 201) {
+                          //    toast.success("Linked succesfully");
+                          //    setDashboardRoute("dashboard")
+                          // }
+                        }}
                         className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >
-                        Create GiveAway
+                        Create Giveaway
                       </button>
                     </div>
                   </div>
-                </form>
+                </div>
               </div>
             )}
           </div>

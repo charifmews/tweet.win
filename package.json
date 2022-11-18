@@ -24,6 +24,7 @@
     "needle": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-toastify": "^9.1.1",
     "remix-auth": "^3.3.0",
     "remix-auth-twitter": "^0.1.0",
     "satori": "^0.0.44"

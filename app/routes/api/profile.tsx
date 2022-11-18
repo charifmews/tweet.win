@@ -21,7 +21,10 @@ export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
     case "POST": {
       const { address, signature } = await request.json();
-      const addressFromSignature = verifyMessage(user.id.toString(), signature);
+      const addressFromSignature = verifyMessage(
+        `Link Twitter @${user.screen_name} with Web3 wallet ${address}`,
+        signature
+      );
 
       if (address == addressFromSignature) {
         const redis = Redis.fromEnv();

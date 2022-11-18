@@ -23,9 +23,9 @@ export function Footer() {
               </svg>
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/charifmews/tweet.win"
               className="group"
-              aria-label="TaxPal on GitHub"
+              aria-label="Tweet.Win on GitHub"
             >
               <svg
                 aria-hidden="true"

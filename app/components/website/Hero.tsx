@@ -8,23 +8,28 @@ import { Form } from "@remix-run/react";
 
 export function Hero() {
   return (
-    <Container className="flex flex-col items-center justify-center pb-16 text-center lg:pt-12" style={{
-      minHeight: `calc(100vh - 220px)`
-    }}>
+    <Container
+      className="flex flex-col items-center justify-center pb-16 text-center lg:pt-12"
+      style={{
+        minHeight: `calc(100vh - 220px)`,
+      }}
+    >
       <h1 className="font-display mx-auto max-w-4xl text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl">
         <Logo className="mb-4 h-20" />
         Tweet.
         <span className="relative whitespace-nowrap text-sky-600">Win</span>
+        <span className="bg-red-200 px-2 rounded-full text-base  position absolute tracking-normal">Beta</span>
         <br />
       </h1>
       <h2 className="font-display mx-auto mt-2 max-w-4xl text-[26px] font-medium tracking-tight text-sky-800">
         Trustless Giveaway Tweets
       </h2>
-      <p className="mx-auto mt-6 max-w-xs text-lg tracking-tight text-slate-700">
+      <p className="mx-auto mt-6 max-w-md text-lg tracking-tight text-slate-700">
         Never trust a giveaway tweet anymore! <br />
-        Tweet.Win guarantees fair giveaways 😇
+        Our giveaways are cryptographically fair 😇
         <br />
-        Helps projects to have more reach with their giveaways tweets 🤩
+        Creating a tweet giveaway is under 1 dollar! <br />
+         Only scammers wouldn't pay that 🤩
       </p>
       <div className="mx-auto mt-8 flex max-w-xs flex-col items-center justify-center gap-y-6">
         <Form method="post" action="/login">
@@ -36,7 +41,9 @@ export function Hero() {
           color="sky"
           className=""
           variant="outline"
-          onClick={() => window.open("https://vimeo.com/user189005215/tweet-win",'_blank')}
+          onClick={() =>
+            window.open("https://vimeo.com/user189005215/tweet-win", "_blank")
+          }
         >
           <svg
             aria-hidden="true"
