@@ -46,9 +46,7 @@ function classNames(...classes: string[]) {
 
 export default function Dashboard() {
   const { user } = useLoaderData<LoaderData>();
-  // const [dashboardRoute, setDashboardRoute] = useState<string>(user.wallet ? "dashboard" : "onboarding");
-  const [dashboardRoute, setDashboardRoute] =
-    useState<string>("create Giveaway");
+  const [dashboardRoute, setDashboardRoute] = useState<string>(user.wallet ? "dashboard" : "onboarding");
 
   const [giveawayName, setGiveawayName] = useState("");
   const [giveawayAmount, setGiveawayAmount] = useState(1);
