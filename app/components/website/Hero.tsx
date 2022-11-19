@@ -18,7 +18,9 @@ export function Hero() {
         <Logo className="mb-4 h-20" />
         Tweet.
         <span className="relative whitespace-nowrap text-sky-600">Win</span>
-        <span className="bg-red-200 px-2 rounded-full text-base  position absolute tracking-normal">Beta</span>
+        <span className="position absolute rounded-full bg-red-200  px-2 text-base tracking-normal">
+          Beta
+        </span>
         <br />
       </h1>
       <h2 className="font-display mx-auto mt-2 max-w-4xl text-[26px] font-medium tracking-tight text-sky-800">
@@ -29,7 +31,7 @@ export function Hero() {
         Our giveaways are cryptographically fair 😇
         <br />
         Creating a tweet giveaway is under 1 dollar! <br />
-         Only scammers wouldn't pay that 🤩
+        Only scammers wouldn't pay that 🤩
       </p>
       <div className="mx-auto mt-8 flex max-w-xs flex-col items-center justify-center gap-y-6">
         <Form method="post" action="/login">

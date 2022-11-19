@@ -1,0 +1,13 @@
+name: minute-api-cron
+on:
+  schedule:
+    - cron: "* * * * *"
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Giveaways Cron Job
+        run: |
+          curl --request POST \
+          --url 'https://www.tweet.win/api/cron/giveaways' \
+          --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'

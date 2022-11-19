@@ -14,6 +14,7 @@ import UnlinkedLogo from "~/images/logos/unlink.svg";
 import { Redis } from "@upstash/redis";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { GiftIcon, MegaphoneIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 
 export const loader: LoaderFunction = async ({ request }) => {
   let user = await authenticator.isAuthenticated(request);
@@ -37,37 +38,7 @@ const navigation = [
   { route: "your Giveaways" },
 ];
 
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Sign out", href: "/logout" },
-];
-
-const actions = [
-  {
-    title: "Request time off",
-    href: "#",
-  },
-  {
-    title: "Benefits",
-    href: "#",
-  },
-  {
-    title: "Schedule a one-on-one",
-    href: "#",
-  },
-  {
-    title: "Payroll",
-    href: "#",
-  },
-  {
-    title: "Submit an expense",
-    href: "#",
-  },
-  {
-    title: "Training",
-    href: "#",
-  },
-];
+const userNavigation = [{ name: "Sign out", href: "/logout" }];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -78,6 +49,10 @@ export default function Dashboard() {
   // const [dashboardRoute, setDashboardRoute] = useState<string>(user.wallet ? "dashboard" : "onboarding");
   const [dashboardRoute, setDashboardRoute] =
     useState<string>("create Giveaway");
+
+  const [giveawayName, setGiveawayName] = useState("");
+  const [giveawayAmount, setGiveawayAmount] = useState(1);
+  const [giveawayDuration, setGiveawayDuration] = useState(1);
 
   return (
     <>
@@ -295,7 +270,6 @@ export default function Dashboard() {
                         await provider.send("eth_requestAccounts", []);
                         const signer = provider.getSigner();
                         const address = await signer.getAddress();
-                        console.log(address);
 
                         const signature = await signer.signMessage(
                           `Link Twitter @${user.screen_name} with Web3 wallet ${address}`
@@ -396,59 +370,23 @@ export default function Dashboard() {
             )}
             {dashboardRoute === "overview Giveaways" && user.wallet && (
               <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
-                <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
-                  {actions.map((action, actionIdx) => (
-                    <div
-                      key={action.title}
-                      className={classNames(
-                        actionIdx === 0
-                          ? "rounded-tl-lg rounded-tr-lg sm:rounded-tr-none"
-                          : "",
-                        actionIdx === 1 ? "sm:rounded-tr-lg" : "",
-                        actionIdx === actions.length - 2
-                          ? "sm:rounded-bl-lg"
-                          : "",
-                        actionIdx === actions.length - 1
-                          ? "rounded-bl-lg rounded-br-lg sm:rounded-bl-none"
-                          : "",
-                        "group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500"
-                      )}
-                    >
-                      <div>
-                        <span className="inline-flex rounded-lg p-3 ring-4 ring-white"></span>
-                      </div>
-                      <div className="mt-8">
-                        <h3 className="text-lg font-medium">
-                          <a href={action.href} className="focus:outline-none">
-                            {/* Extend touch target to entire panel */}
-                            <span
-                              className="absolute inset-0"
-                              aria-hidden="true"
-                            />
-                            {action.title}
-                          </a>
-                        </h3>
-                        <p className="mt-2 text-sm text-gray-500">
-                          Doloribus dolores nostrum quia qui natus officia quod
-                          et dolorem. Sit repellendus qui ut at blanditiis et
-                          quo et molestiae.
-                        </p>
-                      </div>
-                      <span
-                        className="pointer-events-none absolute top-6 right-6 text-gray-300 group-hover:text-gray-400"
+                <div className="mb-6 rounded-md bg-yellow-50 p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <ExclamationTriangleIcon
+                        className="h-5 w-5 text-yellow-400"
                         aria-hidden="true"
-                      >
-                        <svg
-                          className="h-6 w-6"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
-                        </svg>
-                      </span>
+                      />
                     </div>
-                  ))}
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-yellow-800">
+                        Attention needed
+                      </h3>
+                      <div className="mt-2 text-sm text-yellow-700">
+                        <p>Not ready for primetime yet, comeback soon!</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -457,6 +395,28 @@ export default function Dashboard() {
                 <div className="space-y-8 divide-y divide-gray-200">
                   <div className="space-y-8 divide-y divide-gray-200">
                     <div>
+                      <div className="mb-6 rounded-md bg-yellow-50 p-4">
+                        <div className="flex">
+                          <div className="flex-shrink-0">
+                            <ExclamationTriangleIcon
+                              className="h-5 w-5 text-yellow-400"
+                              aria-hidden="true"
+                            />
+                          </div>
+                          <div className="ml-3">
+                            <h3 className="text-sm font-medium text-yellow-800">
+                              Attention needed
+                            </h3>
+                            <div className="mt-2 text-sm text-yellow-700">
+                              <p>
+                                You can only test it on Polygon Mumbai Testnet,
+                                this is not in production yet!
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       <div>
                         <h3 className="text-lg font-medium leading-6 text-gray-900">
                           Create Giveaway Tweet
@@ -470,7 +430,7 @@ export default function Dashboard() {
                       <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         <div className="sm:col-span-4">
                           <label
-                            htmlFor="username"
+                            htmlFor="giveaway-name"
                             className="block text-sm font-medium text-gray-700"
                           >
                             GiveAway name
@@ -481,9 +441,12 @@ export default function Dashboard() {
                             </span>
                             <input
                               type="text"
-                              name="username"
-                              id="username"
-                              autoComplete="username"
+                              autoFocus
+                              name="giveaway-name"
+                              id="giveaway-name"
+                              onChange={(e) => setGiveawayName(e.target.value)}
+                              value={giveawayName}
+                              autoComplete="giveaway-name"
                               className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             />
                           </div>
@@ -500,11 +463,15 @@ export default function Dashboard() {
                             <select
                               id="erc-20-coin"
                               name="erc-20-coin"
+                              value={giveawayDuration}
+                              onChange={(e) =>
+                                setGiveawayDuration(parseInt(e.target.value))
+                              }
                               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             >
-                              <option>1 days</option>
-                              <option>2 days</option>
-                              <option>3 days</option>
+                              <option value={1}>1 days</option>
+                              <option value={2}>2 days</option>
+                              <option value={3}>3 days</option>
                             </select>
                           </div>
                         </div>
@@ -515,16 +482,23 @@ export default function Dashboard() {
                               htmlFor="erc-20-amount"
                               className="flex items-center text-sm font-medium text-gray-700"
                             >
-                              Prize amount{" "}
+                              Prize amount (1-100
                               <img
-                                className="ml-2 h-4"
+                                className="ml-1 h-4"
                                 src="/tokens/link.png"
                                 alt="$LINK"
-                              />
+                              />{" "}
+                              )
                             </label>
                             <div className="mt-1">
                               <input
                                 type="number"
+                                value={giveawayAmount}
+                                onChange={(e) =>
+                                  setGiveawayAmount(parseInt(e.target.value))
+                                }
+                                min="1"
+                                max="100"
                                 name="erc-20-amount"
                                 id="erc-20-amount"
                                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
@@ -572,35 +546,121 @@ export default function Dashboard() {
                             LinkABI,
                             signer
                           );
+
+                          const allowance = await LinkTokenContract.allowance(
+                            address,
+                            "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652"
+                          );
+                          if (allowance < BigNumber.from("0x00")) {
+                            const tx = await LinkTokenContract.approve(
+                              "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652",
+                              "100000000000000000000"
+                            );
+                            // TODO: not the cleanest solution, but for most approval flows this works good enough
+                            if (tx) {
+                              toast.success("Approval successful");
+                            } else {
+                              toast.error("Approval unsuccessful");
+                            }
+                          } else {
+                            toast.success(
+                              "Approval already done, you can verify "
+                            );
+                          }
+                        }}
+                        className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      >
+                        Approve Giveaway
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (giveawayAmount < 1 || giveawayAmount > 100)
+                            return toast.error(
+                              "Prize amount not between 1 - 100"
+                            );
+                          if (!(giveawayDuration in [1, 2, 3]))
+                            return toast.error("Duration is not 1,2 or 3 days");
+                          if (!giveawayName)
+                            return toast.error("Giveaway name is not set");
+
+                          // Fetch to check if name already exist
+                          // TODO: return suggestions if already taken
+                          const resp = await fetch(
+                            `/api/giveaway/${giveawayName}/exist`
+                          );
+                          const { exist } = await resp.json();
+                          if (!!exist)
+                            return toast.error(
+                              "Name already exist, pick a unique one"
+                            );
+
+                          const provider = new ethers.providers.Web3Provider(
+                            window.ethereum,
+                            "any"
+                          );
+                          // Prompt user for account connections
+                          await provider.send("eth_requestAccounts", []);
+                          const signer = provider.getSigner();
+                          const address = await signer.getAddress();
+                          var LinkTokenContract = new ethers.Contract(
+                            "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
+                            LinkABI,
+                            signer
+                          );
                           var GiveawayTweetTokenContract = new ethers.Contract(
                             "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652",
                             GiveawayTweetABI,
                             signer
                           );
 
-                          // const allowance = await LinkTokenContract.allowance(address, "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652")
-                          // if (allowance < BigNumber.from("0x00")) await LinkTokenContract.approve("0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652", "100000000000000000000")
-                          // await LinkTokenContract.approve("0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652", "100000000000000000000")
-                          await GiveawayTweetTokenContract.createGiveaway(
-                            "testb",
-                            "1000000000000000000"
+                          const allowance = await LinkTokenContract.allowance(
+                            address,
+                            "0xF8e78e6b9723f1EeE5209b147C76fCCC727ff652"
                           );
-                          // tokenContract.approve("0xd9145CCE52D386f254917e481eB44e9943F39138", "100000000000000000000")
+                          if (allowance < BigNumber.from("0x00"))
+                            return toast.error(
+                              "You need to approve the giveaway first"
+                            );
 
-                          // const signature = await signer.signMessage(
-                          //   `Link Twitter @${user.screen_name} with Web3 wallet ${address}`
-                          // );
-                          // const resp = await fetch("/api/profile", {
-                          //   method: "POST",
-                          //   body: JSON.stringify({
-                          //     signature,
-                          //     address,
-                          //   }),
-                          // });
-                          // if (resp.status === 201) {
-                          //    toast.success("Linked succesfully");
-                          //    setDashboardRoute("dashboard")
-                          // }
+                          // hacky amount approach, but it works :)
+                          let tx =
+                            await GiveawayTweetTokenContract.createGiveaway(
+                              giveawayName,
+                              `${giveawayAmount}000000000000000000`
+                            );
+
+                          // TODO: not the cleanest solution, and definitely need to fix this
+                          if (tx) {
+                            toast.success(
+                              "Giveaway on-chain created successful"
+                            );
+                            // TODO: create backup solution if this fails
+                            const response = await fetch(
+                              `/api/giveaway/${giveawayName}`,
+                              {
+                                method: "POST",
+                                body: JSON.stringify({
+                                  amount: giveawayAmount,
+                                  expiration:
+                                    Math.round(Date.now() / 1000) +
+                                    giveawayDuration * 24 * 60 * 60,
+                                  token: "LINK",
+                                }),
+                              }
+                            );
+                            if (response.status == 201) {
+                              toast.success(
+                                "Giveaway on-chain created successful"
+                              );
+                              window.location.href = `/giveaways/${giveawayName}`;
+                            } else {
+                              toast.error(
+                                "Something went wrong, contact us through twitter @The_Tweet_Win"
+                              );
+                            }
+                          } else {
+                            toast.error("Giveaway created unsuccessful");
+                          }
                         }}
                         className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >

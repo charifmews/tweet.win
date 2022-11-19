@@ -14,13 +14,16 @@ export const meta: MetaFunction = () => ({
   charset: "utf-8",
   title: "Tweet.Win",
   description:
-    "Never trust a giveaway tweet and participate or create our trustless giveaway tweets. Guaranteed pay-out through smart contracts.",
+    "Never trust a random giveaway tweet again. Our giveaways are cryptographically fair! Guaranteed pay-out through smart contracts.",
   viewport: "width=device-width,initial-scale=1",
-  "twitter:card": "summary",
+  "twitter:card": "summary_large_image",
   "twitter:site": "https://tweet.win",
   "twitter:title": "Tweet.win - Cryptographically guaranteed giveaways!",
-  "twitter:description":
-    "Retweet and create a Tweet.win profile (if you don't have one already) to participate in this guaranteed tweet giveaway!",
+  "twitter:description": `Never trust a giveaway tweet anymore!
+    Our giveaways are cryptographically fair 😇
+    Creating a tweet giveaway is under 1 dollar!
+    Only scammers wouldn't pay that 🤩
+     and create a Tweet.win profile (if you don't have one already) to participate in this guaranteed tweet giveaway!`,
   "twitter:image": "/placeholder-tweet-win.png",
 });
 

@@ -18,11 +18,14 @@ export const action: ActionFunction = async ({ request }) => {
 
       if (address == addressFromSignature) {
         const redis = Redis.fromEnv();
-        await redis.hset(user.id.toString(), {
+        await redis.hset(`u:${user.id.toString()}`, {
           ["wallet"]: addressFromSignature,
         });
         await redis.hset("twitterIdWalletMap", {
           [user.id.toString()]: addressFromSignature,
+        });
+        await redis.hset("walletTwitterIdMap", {
+          [addressFromSignature]: user.id.toString(),
         });
         return json(
           { message: "Wallet successfully linked to Twitter user" },
