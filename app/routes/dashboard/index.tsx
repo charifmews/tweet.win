@@ -21,7 +21,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (!user) return redirect("/");
 
   const redis = Redis.fromEnv();
-  const userData = await redis.hgetall(user.id.toString());
+  const userData = await redis.hgetall(`u:${user.id.toString()}`);
   user = { ...user, ...userData };
 
   return { user };
